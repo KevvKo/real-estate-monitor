@@ -34,16 +34,24 @@ class ImmonetScraper(scrapy.Spider):
         adress = response.css('p.text-100.pull-left::text').getall()
         
         if('Jena' in adress[0] or 'Jena' in adress[1]):
-        
+            
             apartment = scrapy.Field()
+        
+
             apartment['domain'] = response.url.split('/')[2]
             apartment['date'] = datetime.today().strftime('%Y-%m-%d')
+
             apartment['expose'] = response.url.split('/')[4]
             
             #prepare the field coldrent
             coldrent = response.css('div#priceid_2::text').get()
             if(coldrent):
-                apartment['coldrent'] = coldrent.strip().split('.')[0]
+                coldrent = coldrent.replace('\u00a0\u20ac', '').replace('\t', '').replace('\n', '')
+                if('.' in coldrent): 
+                    coldrent = coldrent.replace(',', '')
+                    apartment['coldrent'] = coldrent.replace('.', ',')
+                else:
+                    apartment['coldrent'] = coldrent.replace(',', '') + ',00'
             else:
                 apartment['coldrent'] = None
 
@@ -56,15 +64,22 @@ class ImmonetScraper(scrapy.Spider):
 
             #prepare the field roomnumber
             surface = response.css('span#kffirstareaValue::text').get()
-            if(roomnumber):
-                apartment['surface'] = surface.split()[0]
+            if(surface):
+                surface = surface.replace('\u00a0m\u00b2', '')
+                if('.' in surface):
+                    apartment['surface'] = surface.replace('.', ',').strip()
+                else:
+                    apartment['surface'] = surface.strip() + ',00'
             else:
                 apartment['surface'] = None
 
             #prepare the field sidecosts
             sidecosts = response.css('div#priceid_20::text').get()
             if(sidecosts):
-                apartment['sidecosts'] = sidecosts.split()[0]
+                if('.' in sidecosts):
+                    apartment['sidecosts'] = sidecosts.replace('.', ',').replace('\u00a0\u20ac', '').replace('\t', '').replace('\n', '').strip()
+                else: 
+                    apartment['sidecosts'] = sidecosts.replace('.', ',').replace('\u00a0\u20ac', '').replace('\t', '').replace('\n', '').strip() + ',00'
             else:
                 apartment['sidecosts'] = None
 

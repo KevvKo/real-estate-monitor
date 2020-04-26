@@ -52,12 +52,32 @@ class Is24Scraper(scrapy.Spider):
     #parses the necessary informations from every requestes expose
     def parse_expose(self, response, expose_id):
         apartment = scrapy.Field()
-
+        
         apartment['domain'] = response.url.split('/')[2]
         apartment['date'] = datetime.today().strftime('%Y-%m-%d')
         apartment['expose'] = expose_id
-        apartment['coldrent'] = response.css('div.is24qa-kaltmiete.is24-value.font-semibold.is24-preis-value ::text').get().split()[0].strip(),
-        apartment['roomnumber'] = response.css('div.is24qa-zi.is24-value.font-semibold ::text').get().strip(),
-        apartment['surface'] = response.css('div.is24qa-flaeche.is24-value.font-semibold ::text').get().split()[0].strip(),
-        apartment[ 'sidecosts'] = response.css('dd.is24qa-nebenkosten.grid-item.three-fifths::text').getall()[1].split()[0].strip()
-        yield apartment
+
+        #prepare the coldrent-entry
+        coldrent = response.css('div.is24qa-kaltmiete.is24-value.font-semibold.is24-preis-value::text').get().split(' ')[1]
+        if(',' not in coldrent):
+            coldrent += ',00'
+        apartment['coldrent'] = coldrent.replace('.',  '')
+
+        apartment['roomnumber'] = response.css('dd.is24qa-zimmer.grid-item.three-fifths::text').get().split(' ')[1]
+
+        #prepare the surface-entry
+        surface = response.css('div.is24qa-flaeche.is24-value.font-semibold::text').get().split(' ')[1]
+        if(',' not in surface):
+            surface += ',00'
+        apartment['surface'] = surface
+
+        #prepare the sidecosts-entry
+        sidecosts = response.css('dd.is24qa-nebenkosten.grid-item.three-fifths::text').getall()[1].split()[0]
+
+        if(sidecosts != '0'):
+            if(',' not in sidecosts):
+                sidecosts += ',00'
+            apartment[ 'sidecosts'] = sidecosts
+        else:
+            apartment[ 'sidecosts'] = None  
+        return apartment

@@ -42,7 +42,7 @@ class WggesuchtScraper(scrapy.Spider):
         #prepare the field coldrent
         coldrent = response.css('td.col-xs-6.col-sm-4.print_text_left b::text').get()
         if(coldrent):
-            apartment['coldrent'] = coldrent.split('\u20ac')[0].strip()
+            apartment['coldrent'] = coldrent.replace('\u20ac', '').strip() + ',00'
         else:
             apartment['coldrent'] = None
 
@@ -56,16 +56,19 @@ class WggesuchtScraper(scrapy.Spider):
         #prepare the field roomnumber
         surface = response.css('div#rent_wrapper div.basic_facts_top_part label.amount ::text').get()
         if(roomnumber):
-            apartment['surface'] = surface.split('\u00b2')[0].strip()
+            apartment['surface'] = surface.replace('\u00b2', '').strip().split('m')[0] +',00'
         else:
             apartment['surface'] = None
 
         #prepare the field sidecosts
         sidecosts = response.css('div#graph_wrapper div#utilities_costs label.graph_amount ::text').get()
         if(sidecosts):
-            sidecosts = sidecosts.strip()
-            if(sidecosts is  not 'n.a.'):
-                 apartment['sidecosts'] = sidecosts.split('\u20ac')[0].strip()
+            sidecosts = sidecosts.replace('\u20ac', '').strip()
+            if(sidecosts == 'n.a.'):
+                apartment['sidecosts'] = None
+            else:
+                apartment['sidecosts'] = sidecosts  + ',00'
+                
         else: apartment['sidecosts'] = None
 
         return apartment
