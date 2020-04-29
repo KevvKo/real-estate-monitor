@@ -42,9 +42,11 @@ class Is24Scraper(scrapy.Spider):
             if(href == "expose"):
 
                 #if the current href is an expose check the expose-refferer 
-                exposeReferrer = link.css("::attr(data-go-to-expose-referrer)").extract()[0]
-                if(exposeReferrer == "RESULT_LIST_LISTING"):
-                    exposes[link.css("::attr(href)").extract()[0][8:]] = link.css("::attr(href)").extract()[0]
+                exposeReferrer = link.css("::attr(data-go-to-expose-referrer)").extract()
+                if(len(exposeReferrer) > 0):
+
+                    if(exposeReferrer[0] == "RESULT_LIST_LISTING"):
+                        exposes[link.css("::attr(href)").extract()[0][8:]] = link.css("::attr(href)").extract()[0]
 
         for expose in exposes:
             yield response.follow(url = 'https://www.immobilienscout24.de{}'.format(exposes[expose]), callback = self.parse_expose, cb_kwargs = dict(expose_id = expose))
@@ -80,4 +82,29 @@ class Is24Scraper(scrapy.Spider):
             apartment[ 'sidecosts'] = sidecosts
         else:
             apartment[ 'sidecosts'] = None  
+
+        #prepare the street field
+        street = response.css('span.block.font-nowrap.print-hide ::text').get()
+        if(street is not ""):
+            try:
+                apartment['street'] = street.replace(',', '')
+            except:
+                apartment['street'] = street
+        else:
+            apartment['street'] = None
+
+        #prepare the postcode-field
+        postcode = response.css('span.zip-region-and-country ::text').get()
+        if(postcode is not ""):
+            apartment['postcode'] = postcode.split(' ')[0]
+        else:
+            apartment['postcode'] = None
+
+        #prepare the town field
+        town = response.css('span.zip-region-and-country ::text').get()
+        if(town is not " "):
+            apartment['town'] = town.split(' ')[1]
+        else:
+            apartment['town'] = None
+
         return apartment

@@ -71,4 +71,28 @@ class WggesuchtScraper(scrapy.Spider):
                 
         else: apartment['sidecosts'] = None
 
+        #prepare the adressfileds
+        adress = response.css('div.col-sm-4.mb10 a ::text').getall()
+
+        if(adress):
+        
+            #prepare the street field
+            street = adress[0].replace('\n', '').strip()
+
+            if(street is not ""):
+                apartment['street'] = street
+            else:
+                apartment['street'] = None      
+
+            #prepare the postcode and town field
+            townAdress = adress[1]
+            if(townAdress is not ""):
+                townAdress = townAdress.replace('\n', '').strip().split(' ')
+                apartment['postcode'] = townAdress[0]
+                apartment['town'] = townAdress[1]
+                
+            else:
+                apartment['postcode'] = None
+                apartment['town'] = None
+
         return apartment

@@ -32,55 +32,79 @@ class ImmonetScraper(scrapy.Spider):
     #scraping all informations from the current apartment and store them into  an item
     def parse_apartment_data(self, response):
         adress = response.css('p.text-100.pull-left::text').getall()
-        
-        if('Jena' in adress[0] or 'Jena' in adress[1]):
+        if(len(adress)> 0):
+            if('Jena' in adress[0] or 'Jena' in adress[1]):
+                
+                apartment = scrapy.Field()
             
-            apartment = scrapy.Field()
-        
 
-            apartment['domain'] = response.url.split('/')[2]
-            apartment['date'] = datetime.today().strftime('%Y-%m-%d')
+                apartment['domain'] = response.url.split('/')[2]
+                apartment['date'] = datetime.today().strftime('%Y-%m-%d')
 
-            apartment['expose'] = response.url.split('/')[4]
-            
-            #prepare the field coldrent
-            coldrent = response.css('div#priceid_2::text').get()
-            if(coldrent):
-                coldrent = coldrent.replace('\u00a0\u20ac', '').replace('\t', '').replace('\n', '')
-                if('.' in coldrent): 
-                    coldrent = coldrent.replace(',', '')
-                    apartment['coldrent'] = coldrent.replace('.', ',')
+                apartment['expose'] = response.url.split('/')[4]
+                
+                #prepare the field coldrent
+                coldrent = response.css('div#priceid_2::text').get()
+                if(coldrent):
+                    coldrent = coldrent.replace('\u00a0\u20ac', '').replace('\t', '').replace('\n', '')
+                    if('.' in coldrent): 
+                        coldrent = coldrent.replace(',', '')
+                        apartment['coldrent'] = coldrent.replace('.', ',')
+                    else:
+                        apartment['coldrent'] = coldrent.replace(',', '') + ',00'
                 else:
-                    apartment['coldrent'] = coldrent.replace(',', '') + ',00'
-            else:
-                apartment['coldrent'] = None
+                    apartment['coldrent'] = None
 
-            #prepare the field roomnumber
-            roomnumber = response.css('span#kfroomsValue::text').get()
-            if(roomnumber):
-                apartment['roomnumber'] = roomnumber.strip()
-            else:
-                apartment['roomnumber'] = None
-
-            #prepare the field roomnumber
-            surface = response.css('span#kffirstareaValue::text').get()
-            if(surface):
-                surface = surface.replace('\u00a0m\u00b2', '')
-                if('.' in surface):
-                    apartment['surface'] = surface.replace('.', ',').strip()
+                #prepare the field roomnumber
+                roomnumber = response.css('span#kfroomsValue::text').get()
+                if(roomnumber):
+                    apartment['roomnumber'] = roomnumber.strip()
                 else:
-                    apartment['surface'] = surface.strip() + ',00'
-            else:
-                apartment['surface'] = None
+                    apartment['roomnumber'] = None
 
-            #prepare the field sidecosts
-            sidecosts = response.css('div#priceid_20::text').get()
-            if(sidecosts):
-                if('.' in sidecosts):
-                    apartment['sidecosts'] = sidecosts.replace('.', ',').replace('\u00a0\u20ac', '').replace('\t', '').replace('\n', '').strip()
-                else: 
-                    apartment['sidecosts'] = sidecosts.replace('.', ',').replace('\u00a0\u20ac', '').replace('\t', '').replace('\n', '').strip() + ',00'
-            else:
-                apartment['sidecosts'] = None
+                #prepare the field roomnumber
+                surface = response.css('span#kffirstareaValue::text').get()
+                if(surface):
+                    surface = surface.replace('\u00a0m\u00b2', '')
+                    if('.' in surface):
+                        apartment['surface'] = surface.replace('.', ',').strip()
+                    else:
+                        apartment['surface'] = surface.strip() + ',00'
+                else:
+                    apartment['surface'] = None
 
-            return apartment
+                #prepare the field sidecosts
+                sidecosts = response.css('div#priceid_20::text').get()
+                if(sidecosts):
+                    if('.' in sidecosts):
+                        apartment['sidecosts'] = sidecosts.replace('.', ',').replace('\u00a0\u20ac', '').replace('\t', '').replace('\n', '').strip()
+                    else: 
+                        apartment['sidecosts'] = sidecosts.replace('.', ',').replace('\u00a0\u20ac', '').replace('\t', '').replace('\n', '').strip() + ',00'
+                else:
+                    apartment['sidecosts'] = None
+
+                #prepare the adress fields
+                adressRaw = response.css('p.text-100.pull-left ::text').getall()
+                if(adress):
+                    
+                    adress = ''.join(adressRaw).replace('\t', '').replace('Auf Karte anzeigen', '').split('\u00a0')
+
+                    #prepare the street field
+                    street = adress[0].split('\n')[1]
+
+                    if(street is not ""):
+                        apartment['street'] = street
+                    else:
+                        apartment['street'] = None      
+
+                    #prepare the postcode field
+                    postcode = adress[0].split('\n')[-1]
+                    if(postcode is not ""):
+                        apartment['postcode'] = postcode
+                    else:
+                        apartment['postcode'] = None
+
+                    #prepare the town field
+                    apartment['town'] = adress[-1].replace('\n', '')
+
+                return apartment

@@ -15,7 +15,8 @@ settings = {
     'DOWNLOAD_DELAY' : 0,
     'ITEM_PIPELINES':{
         'pipelines.ApartmentPipeline':100,
-    }
+    },
+    'COOKIES_ENABLED': 'False'
     # 'FEED_FORMAT' : 'jsonlines',
     # 'FEED_URI' : 'rawdata.json'
 }
@@ -43,7 +44,7 @@ l = len(data)
 for i in range(l - 1):
     js = json.loads(data[i])
 
-    currentHash = hashlib.md5((str(js['coldrent'])+str(js['roomnumber'])+str(js['surface'])+str(js['sidecosts'])).encode('utf-8')).digest()
+    currentHash = hashlib.md5((str(js['date'])+str(js['roomnumber'])+str(js['surface'])+str(js['sidecosts'])).encode('utf-8')).digest()
 
     #filters all duplicates, with the hashes
     if(currentHash not in hashes):

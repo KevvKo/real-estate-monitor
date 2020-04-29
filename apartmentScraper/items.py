@@ -13,3 +13,6 @@ class Apartment(scrapy.Item):
     roomnumber = scrapy.Field()
     surface = scrapy.Field()
     sidecosts = scrapy.Field()
+    street = scrapy.Field()
+    postcode = scrapy.Field()
+    town = scrapy.Field()
