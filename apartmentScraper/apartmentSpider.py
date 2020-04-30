@@ -12,7 +12,7 @@ from spiders.immonetScraper import ImmonetScraper
 from spiders.is24Scraper import Is24Scraper
 
 settings = {
-    'DOWNLOAD_DELAY' : 0,
+    'DOWNLOAD_DELAY' : 5,
     'ITEM_PIPELINES':{
         'pipelines.ApartmentPipeline':100,
     },
