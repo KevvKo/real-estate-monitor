@@ -13,30 +13,32 @@ class ImmonetScraper(scrapy.Spider):
     #scraping the next url with searchresults
     def parse(self, response):
 
-        #requesting the first page with results
-        yield scrapy.Request(response.url, callback=self.parse_apartment)
-        pageResults = response.css('ul.tbl.margin-auto.margin-top-0.margin-bottom-0.padding-0 a::attr(href)').getall()
+        #scraping the count of pages with results
+        townValue = response.css('input#locationname ::attr(value)').get()
+
+        pages = int(response.css('a.padding-left-15.paddint-left-sm-12.padding-right-15.padding-right-sm-12.v-line-shadow.v-line-shadow-l::text').getall()[-1])
+        pageN = 1
 
         #requesting further pages with results
-        for page in pageResults:
-            yield scrapy.Request('https://www.immonet.de{}'.format(page), callback=self.parse_apartment)
+        while(pageN <= pages):
+            yield scrapy.Request(response.url + '&page={}'.format(pageN), callback=self.parse_apartment, cb_kwargs = dict(town = townValue))
+            pageN += 1
 
     #scraping all exposes from the current page
-    def parse_apartment(self,response):
+    def parse_apartment(self,response, town):
         exposes = response.css('a.flex-grow-1.display-flex ::attr(href)').getall()
         
         #requesting for every expose from the results the apartmentside
         for expose in exposes:
-           yield scrapy.Request('https://www.immonet.de{}'.format(expose), callback = self.parse_apartment_data)
+           yield scrapy.Request('https://www.immonet.de{}'.format(expose), callback = self.parse_apartment_data, cb_kwargs = dict(town = town))
 
     #scraping all informations from the current apartment and store them into  an item
-    def parse_apartment_data(self, response):
+    def parse_apartment_data(self, response, town):
         adress = response.css('p.text-100.pull-left::text').getall()
         if(len(adress)> 0):
-            if('Jena' in adress[0] or 'Jena' in adress[1]):
+            if(town in adress[0] or town in adress[1]):
                 
                 apartment = scrapy.Field()
-            
 
                 apartment['domain'] = response.url.split('/')[2]
                 apartment['date'] = datetime.today().strftime('%Y-%m-%d')

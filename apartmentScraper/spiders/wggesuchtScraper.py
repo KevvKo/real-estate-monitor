@@ -17,8 +17,8 @@ class WggesuchtScraper(scrapy.Spider):
         exposes = response.css('div.wgg_card.offer_list_item div.col-sm-4.card_image a::attr(href)').getall()
 
         #loops through every founded expose and starting a request
-        for expose in exposes:
-          yield scrapy.Request('https://www.wg-gesucht.de/{}'.format(expose), callback = self.parse_apartment_data)
+        for i in range(len(exposes)):
+            yield scrapy.Request('https://www.wg-gesucht.de/{}'.format(exposes[i]), callback = self.parse_apartment_data)
 
         nextPage = response.css('ul.pagination.pagination-sm a::attr(href)').getall()
 
@@ -40,7 +40,7 @@ class WggesuchtScraper(scrapy.Spider):
         apartment['expose'] = response.url.split('.')[3]
         
         #prepare the field coldrent
-        coldrent = response.css('td.col-xs-6.col-sm-4.print_text_left b::text').get()
+        coldrent = response.css('div#rent label.graph_amount ::text').get()
         if(coldrent):
             apartment['coldrent'] = coldrent.replace('\u20ac', '').strip() + ',00'
         else:

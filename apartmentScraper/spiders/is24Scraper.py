@@ -18,10 +18,12 @@ class Is24Scraper(scrapy.Spider):
         pages = len(response.css("#pageSelection option"))
         
         pageN = 1
-        
+        town = response.url.split('/')[6]
+        land = response.url.split('/')[5]
         #loop through the pages and parsing the expose-ids
         while(pageN <= pages):
-            yield scrapy.Request(url="https://www.immobilienscout24.de/Suche/de/thueringen/jena/wohnung-mieten?pagenumber={}".format(str(pageN)),callback=self.parse_expose_id)
+
+            yield scrapy.Request(url="https://www.immobilienscout24.de/Suche/de/{}/{}/wohnung-mieten?pagenumber={}".format(land,town ,str(pageN)),callback=self.parse_expose_id)
             pageN +=1
     
     #parsing all expose-ids from the pageresult
@@ -87,7 +89,7 @@ class Is24Scraper(scrapy.Spider):
         street = response.css('span.block.font-nowrap.print-hide ::text').get()
         if(street is not ""):
             try:
-                apartment['street'] = street.replace(',', '')
+                apartment['street'] = street.replace(',', '').strip()
             except:
                 apartment['street'] = street
         else:
@@ -103,7 +105,7 @@ class Is24Scraper(scrapy.Spider):
         #prepare the town field
         town = response.css('span.zip-region-and-country ::text').get()
         if(town is not " "):
-            apartment['town'] = town.split(' ')[1]
+            apartment['town'] = town.split(' ')[1].replace(',', '')
         else:
             apartment['town'] = None
 
