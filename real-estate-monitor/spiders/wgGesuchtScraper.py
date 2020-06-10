@@ -109,7 +109,7 @@ class WggesuchtScraper(scrapy.Spider):
                 #some entrys have no valid postcode as scraped info. 
                 #this occures, through blocking and captchuring from the website. 
                 try:
-                    apartment['postcode'] = int(townAdress[0])
+                    apartment['postcode'] = townAdress[0]
                 except:
                     apartment['postcode'] = None
                 apartment['town'] = townAdress[1]

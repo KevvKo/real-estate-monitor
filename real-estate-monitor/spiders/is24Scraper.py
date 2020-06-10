@@ -125,7 +125,7 @@ class Is24Scraper(scrapy.Spider):
         #prepare the postcode-field
         postcode = response.css('span.zip-region-and-country ::text').get()
         if(postcode is not ""):
-            apartment['postcode'] = int(postcode.split(' ')[0])
+            apartment['postcode'] = postcode.split(' ')[0]
         else:
             apartment['postcode'] = None
 

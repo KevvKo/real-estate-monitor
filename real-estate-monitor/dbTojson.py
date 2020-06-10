@@ -1,5 +1,8 @@
 import MySQLdb
 import json
+import sys
+
+tn = sys.argv[1]
 
 db = MySQLdb.Connect(
     host = 'localhost',
@@ -10,9 +13,9 @@ db = MySQLdb.Connect(
 
 cursor = db.cursor()
 
-query = "SELECT * FROM apartments_berlin"
+query = "SELECT * FROM apartments_{}".format(tn)
 
-with open('berlin.json', 'a+') as file:
+with open('{}.json'.format(tn), 'a+') as file:
 
     with db.cursor(MySQLdb.cursors.DictCursor) as cursor:
         cursor.execute(query)

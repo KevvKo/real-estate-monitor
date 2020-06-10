@@ -4,7 +4,6 @@ import os
 import sys
 import hashlib
 from geopy.geocoders import Nominatim 
-import geopandas
 import MySQLdb
 
 from scrapy.crawler import CrawlerProcess
@@ -49,19 +48,16 @@ tn = sys.argv[1]
 process = CrawlerProcess(settings=settings)
 
 # #scraping for jena
-process.crawl(WggesuchtScraper, url="https://www.wg-gesucht.de/wohnungen-in-Jena.66.2.1.0.html?offer_filter=1&city_id=66&noDeact=1&categories%5B%5D=2&rent_types%5B%5D=0", town = tn)
-process.crawl(ImmonetScraper, url="https://www.immonet.de/immobiliensuche/sel.do?&sortby=0&suchart=1&objecttype=1&marketingtype=2&parentcat=1&city=111924&locationname=Jena", town = tn)
-process.crawl(Is24Scraper, url="https://www.immobilienscout24.de/Suche/de/thueringen/jena/wohnung-mieten", town = tn)
+if(tn == 'jena'):
+    process.crawl(WggesuchtScraper, url="https://www.wg-gesucht.de/wohnungen-in-Jena.66.2.1.0.html?offer_filter=1&city_id=66&noDeact=1&categories%5B%5D=2&rent_types%5B%5D=0", town = tn)
+    process.crawl(ImmonetScraper, url="https://www.immonet.de/immobiliensuche/sel.do?&sortby=0&suchart=1&objecttype=1&marketingtype=2&parentcat=1&city=111924&locationname=Jena", town = tn)
+    process.crawl(Is24Scraper, url="https://www.immobilienscout24.de/Suche/de/thueringen/jena/wohnung-mieten", town = tn)
 
 #scraping for berlin
-# process.crawl(WggesuchtScraper, url="https://www.wg-gesucht.de/wohnungen-in-Berlin.8.2.1.0.html", town = tn)
-# process.crawl(ImmonetScraper, url="https://www.immonet.de/immobiliensuche/sel.do?&sortby=0&suchart=1&objecttype=1&marketingtype=2&parentcnat=1&city=87372&locationname=Berlin", town = tn)
-# process.crawl(Is24Scraper, url="https://www.immobilienscout24.de/Suche/de/berlin/berlin/wohnung-mieten?enteredFrom=result_list", town = tn)
-
-# #scraping for dresden
-# # process.crawl(WggesuchtScraper, url="https://www.wg-gesucht.de/wohnungen-in-Dresden.27.2.1.0.html")
-# # process.crawl(ImmonetScraper, url="https://www.immonet.de/immobiliensuche/sel.do?pageoffset=1&listsize=26&objecttype=1&locationname=Dresden&acid=&actype=&city=100051&ajaxIsRadiusActive=true&sortby=0&suchart=2&radius=0&pcatmtypes=1_2&pCatMTypeStoragefield=&parentcat=1&marketingtype=2&fromprice=&toprice=&fromarea=&toarea=&fromplotarea=&toplotarea=&fromrooms=&torooms=&objectcat=-1&wbs=-1&fromyear=&toyear=&fulltext=&absenden=Ergebnisse+anzeigen")
-# # process.crawl(Is24Scraper, url="https://www.immobilienscout24.de/Suche/de/sachsen/dresden/wohnung-mieten?enteredFrom=result_list")
+if(tn== 'berlin'):
+    process.crawl(WggesuchtScraper, url="https://www.wg-gesucht.de/wohnungen-in-Berlin.8.2.1.0.html?offer_filter=1&city_id=8&noDeact=1&categories%5B%5D=2&rent_types%5B%5D=0", town = tn)
+    process.crawl(ImmonetScraper, url="https://www.immonet.de/immobiliensuche/sel.do?&sortby=0&suchart=1&objecttype=1&marketingtype=2&parentcat=1&city=87372&locationname=Berlin", town = tn)
+    process.crawl(Is24Scraper, url="https://www.immobilienscout24.de/Suche/de/berlin/berlin/wohnung-mieten?enteredFrom=result_list", town = tn)
 
 process.start() # the script will block here until the crawling is finishedg 
 

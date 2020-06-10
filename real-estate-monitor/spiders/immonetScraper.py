@@ -118,7 +118,7 @@ class ImmonetScraper(scrapy.Spider):
                     #prepare the postcode field
                     postcode = adress[0].split('\n')[-1]
                     if(postcode is not ""):
-                        apartment['postcode'] = int(postcode)
+                        apartment['postcode'] = postcode
                     else:
                         apartment['postcode'] = None
 
