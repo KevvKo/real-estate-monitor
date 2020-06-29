@@ -5,10 +5,10 @@ import sys
 tn = sys.argv[1]
 
 db = MySQLdb.Connect(
-    host = 'localhost',
-    user= 'kevin',
-    password = 'Montera93',
-    database = 'apartment_monitoring'
+    host = #specify host,
+    user= #specifiy user,
+    password = #specifiy password,
+    database = 'apartment_monitoring' #specifiy database,
 )
 
 cursor = db.cursor()

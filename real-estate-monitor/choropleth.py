@@ -9,16 +9,17 @@ import matplotlib.pyplot as plt
 import MySQLdb
 import sys
 
-tn = "jena"
+tn = sys.argv[1]
+]
+roomnumber = int(sys.argv[2])
 
 #integrate the db connection
 db = MySQLdb.Connect(
-    host = 'localhost',
-    user= 'kevin',
-    password = 'Montera93',
-    database = 'apartment_monitoring'
+    host = #specify host,
+    user= #specifiy user,
+    password = #specifiy password,
+    database = 'apartment_monitoring' #specifiy database,
 )
-
 cursor = db.cursor()
 query = "SELECT * FROM apartments_{}".format(tn)
 
@@ -34,7 +35,7 @@ with db.cursor(MySQLdb.cursors.DictCursor) as cursor:
     df = df.dropna(subset = ['latitude', 'longitude', 'coldrent', 'roomnumber'])
     
     #additional line to filter the dataframe for apartments with a specific roomnumber
-    df = df[df['roomnumber'] == 2]
+    df = df[df['roomnumber'] == roomnumber]
 
     #filter the postcodes and creating a new vector, which contains average rent of a district 
     postcodes = df['postcode'].unique()
@@ -69,7 +70,7 @@ with db.cursor(MySQLdb.cursors.DictCursor) as cursor:
         fill_color='YlGnBu',
         fill_opacity=0.7,
         line_opacity=1,
-        legend_name='average coldrent in €'
+        legend_name='{}-room-flats average coldrent for in €'.format(str(roomnumber))
     ).add_to(hmap)
 
     folium.LayerControl().add_to(hmap)

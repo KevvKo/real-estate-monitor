@@ -12,10 +12,10 @@ class Is24Scraper(scrapy.Spider):
         self.start_urls = [url]
         self.town = town
         self.db = MySQLdb.Connect(
-            host = 'localhost',
-            user= 'kevin',
-            password = 'Montera93',
-            database = 'apartment_monitoring'
+            host = #specify host,
+            user= #specifiy user,
+            password = #specifiy password,
+            database = #specifiy database,
         )
 
         self.cursor = self.db.cursor()

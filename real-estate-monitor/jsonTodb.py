@@ -2,7 +2,7 @@ import json
 import MySQLdb
 import sys
 
-town = 'berlin'
+town = sys.argv[1]
 
 with open ("./{}.json".format(town)) as file:
     data = file.read()
@@ -10,10 +10,10 @@ with open ("./{}.json".format(town)) as file:
 
 #handling the database
 db = MySQLdb.Connect(
-    host = 'localhost',
-    user= 'kevin',
-    password = 'Montera93',
-    database = 'apartment_monitoring'
+    host = #specify host,
+    user= #specifiy user,
+    password = #specifiy password,
+    database = 'apartment_monitoring' #specifiy database,
 )
 
 cursor = db.cursor()

@@ -61,17 +61,19 @@ if(tn== 'berlin'):
 
 process.start() # the script will block here until the crawling is finishedg 
 
-#handling the database
+#handling the database 
+#note, the tables are defined by apartments_jena and apartments_berlin
+#be sure, you have adjusted the table names for your usecase
 db = MySQLdb.Connect(
-    host = 'localhost',
-    user= 'kevin',
-    password = 'Montera93',
-    database = 'apartment_monitoring'
+    host = #specify host,
+    user= #specifiy user,
+    password = #specifiy password,
+    database = 'apartment_monitoring' #specifiy database,
 )
 
 cursor = db.cursor()
 
-#opens the scraped items-file
+#opens the scraped items-file2
 with open ('cache.json', 'r') as cache:
    data = cache.read()
 
@@ -140,6 +142,3 @@ for i in range(l - 1):
 cache.close()
 os.remove('cache.json')
 
-    
-
-    
