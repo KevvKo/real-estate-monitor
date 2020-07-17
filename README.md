@@ -61,4 +61,4 @@ The choropleth.py is an additional software to evaluate the collected informatio
 
 In this example picture, choropleth.py takes the value **2** and creating for every district the average coldrent for apartmants with a roomnumber of two. For creating a choropleth map, the coordinates are necessary.
 
-Further, in the repository you can find datasets for berlin and jena with collected informatins, stored in a JSON-File.
+Further, in the repository you can find datasets for berlin and jena with collected informations, stored in a JSON-File.
